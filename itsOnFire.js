@@ -3,6 +3,8 @@ window.FireDefined = window.FireDefined || true;
 
 var OnFire = function() {
 
+  this._flameContainers = this.flameContainers || [];
+
   this.initializeFire = function() {
     var d = document,
         node = d.getElementById('__flamify_nodes'),
@@ -41,11 +43,13 @@ var OnFire = function() {
     }
 
     var flame;
-    for( var i = 0; i < cornify_unicorntainers.length; i++ ) {
-        flame = cornify_unicorntainers[i];
+    for( var i = 0; i < this._flameContainers.length; i++ ) {
+        flame = this._flameContainers[i];
         flame.parentNode.removeChild(flame);
     }
-    flameContainers = [];
+
+    // removing this because...
+    // flameContainers = [];
   };
 
   // Add the rainbow cupcake button to the page.
