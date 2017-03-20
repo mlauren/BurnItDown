@@ -3,7 +3,7 @@ window.FireDefined = window.FireDefined || true;
 
 var OnFire = function() {
 
-  this._flameContainers = this.flameContainers || [];
+  this.flameContainers = this.flameContainers || [];
 
   this.initializeFire = function() {
     var d = document,
@@ -43,8 +43,8 @@ var OnFire = function() {
     }
 
     var flame;
-    for( var i = 0; i < this._flameContainers.length; i++ ) {
-        flame = this._flameContainers[i];
+    for( var i = 0; i < this.flameContainers.length; i++ ) {
+        flame = this.flameContainers[i];
         flame.parentNode.removeChild(flame);
     }
 
