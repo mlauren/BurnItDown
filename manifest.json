@@ -24,6 +24,10 @@
       "32": "images/cornify_32.png",
       "48": "images/cornify_48.png"
    },
+   "web_accessible_resources": [
+      "images/firePS.jpg",
+      "images/*.gif"
+   ],
    "manifest_version": 2,
    "name": "Set your website on fire",
    "permissions": [ "tabs", "http://*/*", "https://*/*" ],
