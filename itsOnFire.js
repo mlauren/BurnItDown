@@ -1,17 +1,26 @@
 
-window.FireDefined = window.FireDefined || true;
+
+
 
 var OnFire = function() {
 
+  window.FireDefined = window.FireDefined || true;
+  /* 
+    Todos: UI
+    
+    edit button so its clear that it removes all the fires.
   
+   */
+  this.flameContainers = this.flameContainers || [];
+  console.log(this.flameContainers);
 
-  this.initializeFire = function() {
+  this.initializeFire = function()
+  {
     var d = document,
         node = d.getElementById('__flamify_nodes'),
         nodeElement = null;
 
-    this.flameContainers = this.flameContainers || [];
-    this.fireCount = 1;
+    this.fireCount = 0;
 
     if (!node) {
       nodeElement = d.createElement('div');
@@ -25,15 +34,12 @@ var OnFire = function() {
     this.setFire();
   }
 
-
   this.setFire = function()
   {
-    this.fireCount += 1;
+    this.fireCount++;
 
     var divElement = document.createElement('div');
         divElement.style.position = 'fixed';
-
-    this.flameContainers.push(divElement);
 
     var heightRandom = Math.random()*.75
       , windowHeight = 768
@@ -44,11 +50,11 @@ var OnFire = function() {
       , numType = 'px';
 
     // Check browser compatability
-    if(typeof(window.innerHeight) == 'number') {
+    if ( typeof(window.innerHeight) == 'number' ) {
       windowHeight = window.innerHeight;
       windowWidth = window.innerWidth;
     }
-    else if (de && de.clientHeight) {
+    else if ( de && de.clientHeight ) {
       windowHeight = de.clientHeight;
       windowWidth = de.clientWidth;
     }
@@ -57,65 +63,60 @@ var OnFire = function() {
       height = Math.round( height * 100 ) + '%';
     }
 
-    divElement.onclick = cornify_add;
-    divElement.style.zIndex = 2147483638;
+    divElement.onclick = this.setFire;
+    var zindex = 2147483638;
+    divElement.style.zIndex = zindex;
     divElement.style.outline = 0;
-    
 
-    if ( this.fireCount == 15 ) {
+    console.log(this.fireCount % 3);
+    console.log(this.fireCount);
+    if ( this.fireCount % 3 == 1 ) {
       divElement.style.top = Math.max( 0, Math.round( (windowHeight - 530) / 2 ) )  + 'px';
-      divElement.style.left = Math.round( (windowWidth-530)/2 ) + 'px';
-      divElement.style.zIndex = 2147483639;
+      divElement.style.left = Math.round( ( windowWidth - 530 ) / 2 ) + 'px';
+      divElement.style.zIndex = zindex + 1;
     } else {
       if ( numType == 'px' ) divElement.style.top = Math.round( windowHeight * heightRandom ) + numType;
       else divElement.style.top = height;
       divElement.style.left = Math.round( Math.random() * 90 ) + '%';
     }
 
-    var imgElement = document.createElement('img');
-    
-    var currentTime = new Date();
-    
-    var images = [
+    var imgElement = document.createElement('img'),
+        whichImg,
+        d = document,
+        nodes = d.getElementById('__flamify_nodes');
 
+    var imagesSwatch = [
+      chrome.extension.getURL('/images/fire1.gif'),
+      chrome.extension.getURL('/images/fire2.gif'),
+      chrome.extension.getURL('/images/fire3.gif'),
+      chrome.extension.getURL('/images/fire4.gif'),
+      chrome.extension.getURL('/images/fire5.gif'),
+      chrome.extension.getURL('/images/fire6.gif')
     ];
-    /*var submitTime = currentTime.getTime();
-    if( cornify_count==15 ) submitTime = 0;
-    img.setAttribute('src',cornify_url+'getacorn.php?r=' + submitTime + '&url='+document.location.href);
-    */
 
-    var body = document.getElementsByTagName('body')[0];
+    var imagesSwatchLength = imagesSwatch['length'] - 1;
+    whichImg = Math.round(Math.random() * imagesSwatchLength);
+    imgElement.setAttribute('src', imagesSwatch[whichImg]);
 
-    body.appendChild(divElement);
+    nodes.appendChild(divElement);
     divElement.appendChild(imgElement);
 
-    // Add stylesheet.
-    /*
-    if (cornify_count == 5) {
-      var cssExisting = document.getElementById('__cornify_css');
-      if (!cssExisting) {
-        var head = document.getElementsByTagName("head")[0];
-        var css = document.createElement('link');
-        css.id = '__cornify_css';
-        css.type = 'text/css';
-        css.rel = 'stylesheet';
-        css.href = 'https://www.cornify.com/css/cornify.css';
-        css.media = 'screen';
-        head.appendChild(css);
-      }
-      cornify_replace();
-    } */
+
+    this.flameContainers.push(divElement);
+
+    console.log(this.flameContainers);
   };
 
   // Clicking the rainbow cupcake button makes all the unicorns
   // disappear (should only be used in an emergency, since it's sad).
-  this._clickFlame = function() {
+  this.clickFlame = function()
+  {
     var doc = document;
 
-    /*var nodes = doc.getElementById('__cornify_nodes');
+    var nodes = doc.getElementById('__flamify_nodes');
     if(nodes) {
         nodes.parentNode.removeChild(nodes);
-    }*/
+    }
 
     var button = doc.getElementById('__onfire_flame_button');
     if(button) {
@@ -123,17 +124,16 @@ var OnFire = function() {
     }
 
     var flame;
-    for( var i = 0; i < this.flameContainers.length; i++ ) {
+    console.log(this.flameContainers);
+    for( var i = 0; i < this.flameContainers['length']; i++ ) {
         flame = this.flameContainers[i];
         flame.parentNode.removeChild(flame);
     }
-
-    // removing this because...
-    // flameContainers = [];
   };
 
   // Add the rainbow cupcake button to the page.
-  this._addFlameButton = function() {
+  this._addFlameButton = function()
+  {
     var id = '__onfire_flame_button',
         doc = document,
         button = doc.getElementById(id);
@@ -141,7 +141,7 @@ var OnFire = function() {
     if ( !button ) {
         button = doc.createElement('div');
         button.id = id;
-        button.onclick = this._clickFlame;
+        button.onclick = this.clickFlame;
         button.style.position = 'fixed';
         button.style.top = '10px';
         button.style.right = '10px';
@@ -163,13 +163,20 @@ var OnFire = function() {
     }
   };
 
-
-  // this.setFire();
-
   var setItAflame = window.FireDefined ? this.initializeFire() : false;
 
 }
 
-OnFire();
-console.log('set it on fire!');
+if ( ! window.FireDefined ) {
+  chrome.extension.onMessage.addListener(
+      function(request, sender, sendResponse) {
+          console.log('onMessage');
+          OnFire();
+      }
+  );
+}
+
+
+
+
 
