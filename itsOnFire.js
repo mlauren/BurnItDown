@@ -11,8 +11,9 @@ var OnFire = function() {
     edit button so its clear that it removes all the fires.
   
    */
-  this.flameContainers = this.flameContainers || [];
+  this.flameContainers;
   console.log(this.flameContainers);
+  this.fireCount = this.fireCount || 0;
 
   this.initializeFire = function()
   {
@@ -20,7 +21,7 @@ var OnFire = function() {
         node = d.getElementById('__flamify_nodes'),
         nodeElement = null;
 
-    this.fireCount = 0;
+    this.flameContainers = this.flameContainers || [];
 
     if (!node) {
       nodeElement = d.createElement('div');
@@ -68,9 +69,10 @@ var OnFire = function() {
     divElement.style.zIndex = zindex;
     divElement.style.outline = 0;
 
-    console.log(this.fireCount % 3);
     console.log(this.fireCount);
-    if ( this.fireCount % 3 == 1 ) {
+    console.log(this.fireCount % 3);
+
+    if ( this.fireCount % 3 === 1 ) {
       divElement.style.top = Math.max( 0, Math.round( (windowHeight - 530) / 2 ) )  + 'px';
       divElement.style.left = Math.round( ( windowWidth - 530 ) / 2 ) + 'px';
       divElement.style.zIndex = zindex + 1;
@@ -163,17 +165,17 @@ var OnFire = function() {
     }
   };
 
-  var setItAflame = window.FireDefined ? this.initializeFire() : false;
+  chrome.extension.onMessage.addListener(
+      function(request, sender, sendResponse) {
+          console.log('onMessage');
+          this.initializeFire();
+      }
+  );
 
 }
 
 if ( ! window.FireDefined ) {
-  chrome.extension.onMessage.addListener(
-      function(request, sender, sendResponse) {
-          console.log('onMessage');
-          OnFire();
-      }
-  );
+  OnFire();
 }
 
 
