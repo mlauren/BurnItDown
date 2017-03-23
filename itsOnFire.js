@@ -1,18 +1,19 @@
 
 
+/*
+  UI stuff
+  - get numero % working for special cases
+  - coverage needs to look better
 
+
+*/
 
 var OnFire = function() {
 
   window.FireDefined = window.FireDefined || true;
-  /* 
-    Todos: UI
-    
-    edit button so its clear that it removes all the fires.
-  
-   */
-  this.flameContainers;
-  console.log(this.flameContainers);
+
+  window.flameContainers = window.flameContainers || [];
+  console.log(window.flameContainers);
   this.fireCount = this.fireCount || 0;
 
   this.initializeFire = function()
@@ -21,17 +22,13 @@ var OnFire = function() {
         node = d.getElementById('__flamify_nodes'),
         nodeElement = null;
 
-    this.flameContainers = this.flameContainers || [];
-
     if (!node) {
       nodeElement = d.createElement('div');
       nodeElement.id = '__flamify_nodes';
       d.getElementsByTagName('body')[0].appendChild(nodeElement);
 
-      this._addFlameButton();
+      this.addFlameButton();
     }
-
-    // cornify_add();
     this.setFire();
   }
 
@@ -68,16 +65,25 @@ var OnFire = function() {
     var zindex = 2147483638;
     divElement.style.zIndex = zindex;
     divElement.style.outline = 0;
+    var special;
 
-    console.log(this.fireCount);
-    console.log(this.fireCount % 3);
+    var special = this.fireCount % 11;
+    console.log( special === 0 );
 
-    if ( this.fireCount % 3 === 1 ) {
-      divElement.style.top = Math.max( 0, Math.round( (windowHeight - 530) / 2 ) )  + 'px';
-      divElement.style.left = Math.round( ( windowWidth - 530 ) / 2 ) + 'px';
+    if ( special === 0 ) {
+      // console.log( Math.round(Math.random() * special) );
+      // console.log('style top', Math.max( 0, Math.round( (windowHeight - 530) / 2 ) ) );
+      // console.log('style left', Math.round( ( windowWidth - 530 ) / 2 ) );
+      var randomWidth = Math.floor((Math.random() * windowWidth) + 1);
+      var randomHeight = Math.floor((Math.random() * windowHeight) + 1);
+
+      divElement.style.top = Math.max( 0, Math.round( (windowHeight - randomHeight) / 2 ) )  + 'px';
+      divElement.style.left = Math.round( ( windowWidth - randomWidth ) / 2 ) + 'px';
       divElement.style.zIndex = zindex + 1;
     } else {
-      if ( numType == 'px' ) divElement.style.top = Math.round( windowHeight * heightRandom ) + numType;
+      if ( numType == 'px' ) {
+        divElement.style.top = Math.round( windowHeight * heightRandom ) + numType;
+      } 
       else divElement.style.top = height;
       divElement.style.left = Math.round( Math.random() * 90 ) + '%';
     }
@@ -92,21 +98,25 @@ var OnFire = function() {
       chrome.extension.getURL('/images/fire2.gif'),
       chrome.extension.getURL('/images/fire3.gif'),
       chrome.extension.getURL('/images/fire4.gif'),
-      chrome.extension.getURL('/images/fire5.gif'),
       chrome.extension.getURL('/images/fire6.gif')
     ];
 
     var imagesSwatchLength = imagesSwatch['length'] - 1;
     whichImg = Math.round(Math.random() * imagesSwatchLength);
-    imgElement.setAttribute('src', imagesSwatch[whichImg]);
+    if ( special === 0 ) {
+      imgElement.setAttribute('src', chrome.extension.getURL('/images/fire5.gif'));
+    }
+    else {
+      imgElement.setAttribute('src', imagesSwatch[whichImg]);
+    }
 
     nodes.appendChild(divElement);
     divElement.appendChild(imgElement);
 
 
-    this.flameContainers.push(divElement);
+    window.flameContainers.push(divElement);
 
-    console.log(this.flameContainers);
+    console.log(window.flameContainers);
   };
 
   // Clicking the rainbow cupcake button makes all the unicorns
@@ -114,11 +124,11 @@ var OnFire = function() {
   this.clickFlame = function()
   {
     var doc = document;
-
+    /*
     var nodes = doc.getElementById('__flamify_nodes');
     if(nodes) {
         nodes.parentNode.removeChild(nodes);
-    }
+    }*/
 
     var button = doc.getElementById('__onfire_flame_button');
     if(button) {
@@ -126,15 +136,17 @@ var OnFire = function() {
     }
 
     var flame;
-    console.log(this.flameContainers);
-    for( var i = 0; i < this.flameContainers['length']; i++ ) {
-        flame = this.flameContainers[i];
-        flame.parentNode.removeChild(flame);
+    console.log(window.flameContainers);
+    for( var i = 0; i < window.flameContainers['length']; i++ ) {
+        flame = window.flameContainers[i];
+        window.flameContainers[i].parentNode.removeChild(flame);
     }
+    // empty the containers
+    window.flameContainers = [];
   };
 
   // Add the rainbow cupcake button to the page.
-  this._addFlameButton = function()
+  this.addFlameButton = function()
   {
     var id = '__onfire_flame_button',
         doc = document,
@@ -150,11 +162,11 @@ var OnFire = function() {
         button.style.zIndex = 2147483640;
 
         var image = document.createElement('img');
-        image.src = chrome.extension.getURL('/images/firePS.jpg');
-        image.width = 50;
-        image.height = 50;
-        image.style.width = '50px !important';
-        image.style.height = '50px !important';
+        image.src = chrome.extension.getURL('/images/nomorefire.png');
+        image.width = 27;
+        image.height = 36;
+        image.style.width = '27px !important';
+        image.style.height = '36px !important';
         image.style.display = 'block !important';
         image.style.cursor = 'pointer !important';
         image.style.margin = '0 !important';
