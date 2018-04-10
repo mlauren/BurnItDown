@@ -83,7 +83,7 @@ var OnFire = function() {
     } else {
       if ( numType == 'px' ) {
         divElement.style.top = Math.round( windowHeight * heightRandom ) + numType;
-      } 
+      }
       else divElement.style.top = height;
       divElement.style.left = Math.round( Math.random() * 90 ) + '%';
     }
@@ -145,7 +145,6 @@ var OnFire = function() {
     window.flameContainers = [];
   };
 
-  // Add the rainbow cupcake button to the page.
   this.addFlameButton = function()
   {
     var id = '__onfire_flame_button',
@@ -189,8 +188,3 @@ var OnFire = function() {
 if ( ! window.FireDefined ) {
   OnFire();
 }
-
-
-
-
-

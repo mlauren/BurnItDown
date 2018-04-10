@@ -45,7 +45,7 @@ var updateFakesNewsIndicator = function(tabId, info) {
 // Browser events
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-    chrome.tabs.executeScript(null, {file:"itsOnFire.js"}, function () {
+    chrome.tabs.executeScript(null, {file:"itsOnFireAgain.js"}, function () {
         chrome.tabs.sendMessage(tab.id, 'douse_page');
     });
 });
