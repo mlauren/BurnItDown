@@ -1,8 +1,26 @@
-// define fire group
+// ------ Basic setup ------
+
+// every 10 seconds, add new fire to DOM
+
+// every dom click, add another fire
+// fire starts on chrome browser click
+
+// if fake news site, make fires start immediately
+
+//  ------ Adl Steps ------
+
+// create same sized gifs 
+// create grid to detect when one node is touching another
+// 1 - 2 - 4 - 8 sized fires for grid
+// sound effects and eventual explosion
+
+
+
 function log(val) {
   console.log(val);
 }
 
+// define fire group
 function FireList() {
   this.head = null;
   this.tail = null;
@@ -38,92 +56,89 @@ FireList.prototype.removeFireFromHead = function(id) {
 // Fire Toolz
 function FireTools() {
   this.nodeContainer = null;
-  this.domNameContainer = '__flamify_nodes';
-  this.addDomContainer = function (domNameContainer = '__flamify_nodes') {
-    // create dom object.
-    var d = document,
-        node = d.getElementById(domNameContainer),
-        nodeElement = null;
-
-    if (!node) {
-      nodeElement = d.createElement('div');
-      nodeElement.id = domNameContainer;
-      d.getElementsByTagName('body')[0].appendChild(nodeElement);
-      return nodeElement;
-    }
-  }
-  this.fetchDomContainer = function(domNameContainer = '__flamify_nodes') {
-    // create dom object.
-    var d = document,
-    node = d.getElementById(domNameContainer),
-
-    if (!node) {
-      return null;
-    } else {
-      return node;
-    }
-  }
   this.availableImg = [
     chrome.extension.getURL('/images/fire1.gif'),
     chrome.extension.getURL('/images/fire2.gif'),
     chrome.extension.getURL('/images/fire3.gif'),
-    chrome.extension.getURL('/images/fire4.gif'),
     chrome.extension.getURL('/images/fire5.gif'),
     chrome.extension.getURL('/images/fire6.gif')
   ];
 }
-// every 10 seconds, add new fire to DOM
 
-
-// get ID, Get URL and pass it to the dom function as well as the node function
-
-FireTools.prototype.addFireToDom = function(id, url) {
-  // if ID already exists inside the DOM , return null
-
-  var node = this.fetchDomContainer();
-  if (!node) {
-    node = this.addDomContainer();
-  }
+FireTools.prototype.addFireContainerToDom = function(domNameContainer) {
   // add additional fire to DOM
-  var imgElement = document.createElement('img'),
-    whichImg,
+  domNameContainer = domNameContainer || '__flamify_nodes';
+  var nodesContainer,
     d = document,
-    nodesContainer = node;
-  imgElement.setAttribute('id', id);
-  imgElement.setAttribute('src', url);
+    zindex = 2147483638;
+
+  nodesContainer = d.createElement('div');
+  nodesContainer.id = domNameContainer;
+  nodesContainer.style.zIndex = zindex;
+  nodesContainer.style.outline = 0;
+
+  this.setNodeContainer(domNameContainer);
+
+  d.getElementsByTagName('body')[0].appendChild(nodesContainer);
+}
+
+FireTools.prototype.setNodeContainer = function(domNameContainer) {
+  domNameContainer = domNameContainer || '__flamify_nodes';
+  this.nodeContainer = document.getElementById(domNameContainer);
+}
+
+FireTools.prototype.fetchDomContainer = function(domNameContainer) {
+  domNameContainer = domNameContainer || '__flamify_nodes';
+  var d = document,
+      nodesContainer;
+
+  nodesContainer = d.getElementById(domNameContainer);
+  if (!nodesContainer) return null;
+  else return nodesContainer;
+}
+
+FireTools.prototype.addFireToDom = function(id) {
+  var d = document,
+      gifContainer = d.createElement('div'),
+      heightRandom = Math.random()*.75,
+      windowHeight = window.innerHeight,
+      windowWidth = window.innerWidth,
+      zindex = 2147483638,
+      imagesSwatchLength = this.availableImg['length'] - 1,
+      imgElement = document.createElement('img'),
+      numType = 'px';
+
+  gifContainer.id = '__flamify_nodes__node_' + id;
+  gifContainer.onclick = this.addFireToDom;
+  gifContainer.style.zIndex = zindex;
+  gifContainer.style.outline = 0;
+
+  // Todo - set this more incouragingly based on sector
+  gifContainer.style.top = Math.round( windowHeight * heightRandom ) + numType;
+  var whichImg = Math.round(Math.random() * imagesSwatchLength);
+  imgElement.setAttribute('src', this.availableImg[whichImg]);
+  console.log(gifContainer);
+  console.log(imgElement);
+
+  gifContainer.appendChild(imgElement);
+  this.nodeContainer.appendChild(gifContainer);
 }
 
 FireTools.prototype.fetchFireFromDom = function(id) {
+  var d = document,
+      desiredCont = '__flamify_nodes__node_' + id,
+      gifContainer;
 
-
+  gifContainer = d.getElementById(desiredCont);
+  if (!gifContainer) return null;
 }
 
-FireTools.prototype.removeFireFromDom = function() {
-  
-}
-
-
-// check if val exists in list
-LinkedList.prototype.search = function(searchValue) {
-  var currentNode = this.head;
-  while (currentNode) {
-    if (currentNode.value === searchValue) return currentNode.value;
-    currentNode = currentNode.next;
+chrome.extension.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log('onMessage');
+    var fireToolz = new FireTools();
+    fireToolz.addFireContainerToDom();
+    fireToolz.addFireToDom(1);
   }
-  return null;
-}
+);
 
-LinkedList.prototype.indexOf = function(value) {
-  var indexes = [];
-  var currentIndex = 0;
-  var currentNode = this.head;
-
-  while (currentNode) {
-    if (currentNode.value === value ) {
-      indexes.push(currentIndex);
-    }
-    currentNode = currentNode.next;
-    currentIndex++;
-  }
-  return indexes;
-}
