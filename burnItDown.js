@@ -121,6 +121,7 @@ FireTools.prototype.addFireToDom = function(id) {
   console.log(imgElement);
 
   gifContainer.appendChild(imgElement);
+  console.log(this.nodeContainer);
   this.nodeContainer.appendChild(gifContainer);
 }
 
